@@ -1,0 +1,39 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API設計書",
+        "description": "APIドキュメントとして参照　テスト実行ができます。",
+        "version": "8.3.1"
+    },
+    "paths": {
+        "/hello": {
+            "get": {
+                "tags": [
+                    "タグ"
+                ],
+                "summary": "ハロー",
+                "description": "こんにちは",
+                "operationId": "hello",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "メッセージ",
+                                            "type": "string",
+                                            "example": "Hello"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
