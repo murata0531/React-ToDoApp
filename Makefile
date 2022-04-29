@@ -70,7 +70,7 @@ web:
 laravel_app:
 	$(DC) exec laravel_app bash
 react_app:
-	$(DC) exec react_app sh 
+	$(DC) run --rm react_app sh  
 cron:
 	$(DC) exec cron bash
 worker:
