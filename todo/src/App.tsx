@@ -26,6 +26,7 @@ export const App = () => {
       id: new Date().getTime(),
     };
     /**
+     * シャローコピー:
      * スプレッド構文を用いて todos ステートのコピーへ newTodo を追加する
      * 以下と同義
      *
@@ -39,20 +40,34 @@ export const App = () => {
     setText('');
   };
 
+  // 登録済み todo が編集された時のコールバック関数
   const handleOnEdit = (id: number, value: string) => {
     /**
-     * 引数として渡された todo の id が一致する
-     * todos ステート（のコピー）内の todo の
-     * value プロパティを引数 value (= e.target.value) に書き換える
+     * ディープコピー:
+     * 同じく Array.map() を利用するが、それぞれの要素をスプレッド構文で
+     * いったんコピーし、それらのコピー (= Todo 型オブジェクト) を要素とする
+     * 新しい配列を再生成する。
+     *
+     * 以下と同義:
+     * const deepCopy = todos.map((todo) => ({
+     *   value: todo.value,
+     *   id: todo.id,
+     * }));
      */
-    const newTodos = todos.map((todo) => {
+    const deepCopy = todos.map((todo) => ({ ...todo }));
+
+    // ディープコピーされた配列に Array.map() を適用
+    const newTodos = deepCopy.map((todo) => {
       if (todo.id === id) {
         todo.value = value;
       }
       return todo;
     });
 
-    // todos ステートを更新
+    // todos ステート配列をチェック（あとでコメントアウト）
+    console.log('=== Original todos ===');
+    todos.map((todo) => console.log(`id: ${todo.id}, value: ${todo.value}`));
+
     setTodos(newTodos);
   };
 
