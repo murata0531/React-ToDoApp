@@ -39,6 +39,23 @@ export const App = () => {
     setText('');
   };
 
+  const handleOnEdit = (id: number, value: string) => {
+    /**
+     * 引数として渡された todo の id が一致する
+     * todos ステート（のコピー）内の todo の
+     * value プロパティを引数 value (= e.target.value) に書き換える
+     */
+    const newTodos = todos.map((todo) => {
+      if (todo.id === id) {
+        todo.value = value;
+      }
+      return todo;
+    });
+
+    // todos ステートを更新
+    setTodos(newTodos);
+  };
+
   return (
     <div>
       <form onSubmit={(e) => {
@@ -51,7 +68,15 @@ export const App = () => {
       </form>
       <ul>
         {todos.map((todo) => {
-          return <li key={todo.id}>{todo.value}</li>;
+          return (
+            <li key={todo.id}>
+              <input
+                type="text"
+                value={todo.value}
+                onChange={(e) => handleOnEdit(todo.id, e.target.value)}
+               />
+            </li>
+          );
         })}
       </ul>
     </div>
