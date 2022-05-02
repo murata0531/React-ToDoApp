@@ -10,6 +10,10 @@ export const App = () => {
   const [text, setText] = useState('');
   const [todos, setTodos] = useState<Todo[]>([]);
 
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+  };
+
   // todos ステートを更新する関数
   const handleOnSubmit = () => {
     // 何も入力されていなかったらリターン
@@ -40,16 +44,7 @@ export const App = () => {
           handleOnSubmit();
         }}
       >
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
+        <input type="text" value={text} onChange={(e) => handleOnChange(e)} />
         <input type="submit" value="追加" onSubmit={handleOnSubmit} />
       </form>
     </div>
