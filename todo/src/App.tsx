@@ -4,6 +4,7 @@ import { useState } from 'react';
 type Todo = {
   value: string;
   readonly id: number;
+  checked: boolean;
 };
 
 export const App = () => {
@@ -24,6 +25,7 @@ export const App = () => {
     const newTodo: Todo = {
       value: text,
       id: new Date().getTime(),
+      checked: false,
     };
     /**
      * シャローコピー:
@@ -71,6 +73,20 @@ export const App = () => {
     setTodos(newTodos);
   };
 
+  // チェックボックスがチェックされたときのコールバック関数
+  const handleOnCheck = (id: number, checked: boolean) => {
+    const deepCopy = todos.map((todo) => ({ ...todo }));
+
+    const newTodos = deepCopy.map((todo) => {
+      if (todo.id === id) {
+        todo.checked = !checked;
+      }
+      return todo;
+    });
+
+    setTodos(newTodos);
+  };
+
   return (
     <div>
       <form onSubmit={(e) => {
@@ -86,7 +102,13 @@ export const App = () => {
           return (
             <li key={todo.id}>
               <input
+                type="checkbox"
+                checked={todo.checked}
+                onChange={() => handleOnCheck(todo.id, todo.checked)}
+              />
+              <input
                 type="text"
+                disabled={todo.checked}
                 value={todo.value}
                 onChange={(e) => handleOnEdit(todo.id, e.target.value)}
                />
