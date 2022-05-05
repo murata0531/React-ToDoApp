@@ -1,120 +1,43 @@
 // React から useState フックをインポート
-import { useState } from 'react';
-
-// タスクがもつプロパティ
-type Todo = {
-  value: string;
-  readonly id: number;
-  checked: boolean;
-  removed: boolean;
-};
-
-// タスクをフィルタリングする項目
-type Filter = 'all' | 'checked' | 'unchecked' | 'removed';
+// import { useState } from 'react';
+import { useReducer } from 'react';
+import { reducer } from './reducer';
+import { initialState } from './initialState';
 
 export const App = () => {
 
-  const [text, setText] = useState('');
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState<Filter>('all');
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
+    dispatch({ type: 'change', text: e.target.value });
   };
 
-  // todos ステートを更新する関数
   const handleOnSubmit = () => {
-    // 何も入力されていなかったらリターン
-    if (!text) return;
-
-    // 新しい Todo を作成
-    const newTodo: Todo = {
-      value: text,
-      id: new Date().getTime(),
-      checked: false,
-      removed: false,
-    };
-    /**
-     * シャローコピー:
-     * スプレッド構文を用いて todos ステートのコピーへ newTodo を追加する
-     * 以下と同義
-     *
-     * const oldTodos = todos.slice();
-     * oldTodos.unshift(newTodo);
-     * setTodos(oldTodos);
-     *
-     **/
-    setTodos([newTodo, ...todos]);
-    // フォームへの入力をクリアする
-    setText('');
+    dispatch({ type: 'submit' });
   };
 
-  // 登録済み todo が編集された時のコールバック関数
   const handleOnEdit = (id: number, value: string) => {
-    /**
-     * ディープコピー:
-     * 同じく Array.map() を利用するが、それぞれの要素をスプレッド構文で
-     * いったんコピーし、それらのコピー (= Todo 型オブジェクト) を要素とする
-     * 新しい配列を再生成する。
-     *
-     * 以下と同義:
-     * const deepCopy = todos.map((todo) => ({
-     *   value: todo.value,
-     *   id: todo.id,
-     * }));
-     */
-    const deepCopy = todos.map((todo) => ({ ...todo }));
-
-    // ディープコピーされた配列に Array.map() を適用
-    const newTodos = deepCopy.map((todo) => {
-      if (todo.id === id) {
-        todo.value = value;
-      }
-      return todo;
-    });
-
-    // todos ステート配列をチェック（あとでコメントアウト）
-    console.log('=== Original todos ===');
-    todos.map((todo) => console.log(`id: ${todo.id}, value: ${todo.value}`));
-
-    setTodos(newTodos);
+    dispatch({ type: 'edit', id, value });
   };
 
-  // チェックボックスがチェックされたときのコールバック関数
   const handleOnCheck = (id: number, checked: boolean) => {
-    const deepCopy = todos.map((todo) => ({ ...todo }));
-
-    const newTodos = deepCopy.map((todo) => {
-      if (todo.id === id) {
-        todo.checked = !checked;
-      }
-      return todo;
-    });
-
-    setTodos(newTodos);
+    dispatch({ type: 'check', id, checked });
   };
 
-  // 削除ボタンがクリックされたときのコールバック関数
   const handleOnRemove = (id: number, removed: boolean) => {
-    const deepCopy = todos.map((todo) => ({ ...todo }));
-
-    const newTodos = deepCopy.map((todo) => {
-      if (todo.id === id) {
-        todo.removed = !removed;
-      }
-      return todo;
-    });
-
-    setTodos(newTodos);
+    dispatch({ type: 'remove', id, removed });
   };
 
   const handleOnEmpty = () => {
-    const newTodos = todos.filter((todo) => !todo.removed);
-    setTodos(newTodos);
+    dispatch({ type: 'empty' });
   };
-  // タスクをフィルタリングするコールバック関数
-  const filteredTodos = todos.filter((todo) => {
-    switch (filter) {
+
+  const handleOnFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    dispatch({ type: 'filter', filter: e.target.value as Filter });
+  };
+  
+  const filteredTodos = state.todos.filter((todo) => {
+    switch (state.filter) {
       case 'all':
         return !todo.removed;
       case 'checked':
@@ -130,38 +53,39 @@ export const App = () => {
 
   return (
     <div>
-      <select
-        defaultValue="all"
-        onChange={(e) => setFilter(e.target.value as Filter)}
-      >
+      <select defaultValue="all" onChange={handleOnFilter}>
         <option value="all">すべてのタスク</option>
         <option value="checked">完了したタスク</option>
         <option value="unchecked">現在のタスク</option>
         <option value="removed">ごみ箱</option>
       </select>
-      {filter === 'removed' ? (
+      {state.filter === 'removed' ? (
         <button
           onClick={handleOnEmpty}
-          disabled={todos.filter((todo) => todo.removed).length === 0}
+          disabled={state.todos.filter((todo) => todo.removed).length === 0}
         >
-          ごみ箱を空にする
+          ゴミ箱を空にする
         </button>
       ) : (
-        filter !== 'checked' && (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleOnSubmit();
-            }}
-          >
-            <input
-              type="text"
-              value={text}
-              onChange={(e) => handleOnChange(e)}
-            />
-            <input type="submit" value="追加" onSubmit={handleOnSubmit} />
-          </form>
-        )
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleOnSubmit();
+          }}
+        >
+          <input
+            type="text"
+            value={state.text}
+            disabled={state.filter === 'checked'}
+            onChange={(e) => handleOnChange(e)}
+          />
+          <input
+            type="submit"
+            value="追加"
+            disabled={state.filter === 'checked'}
+            onSubmit={handleOnSubmit}
+          />
+        </form>
       )}
       <ul>
         {filteredTodos.map((todo) => {
