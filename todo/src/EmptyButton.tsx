@@ -1,13 +1,11 @@
 // ゴミ箱をからにするコンポーネント
-import { Dispatch, memo } from 'react';
+import { memo, useContext } from 'react';
+import { AppContext } from './AppContext';
 
-type Props = {
-  dispatch: Dispatch<Action>;
-};
-
-export const EmptyButton = memo((props: Props) => {
+export const EmptyButton = memo(() => {
+  const { state, dispatch } = useContext(AppContext);
   const handleOnEmpty = () => {
-    props.dispatch({ type: 'empty' });
+    dispatch({ type: 'empty' });
   };
 
   return <button onClick={handleOnEmpty}>ごみ箱を空にする</button>;
