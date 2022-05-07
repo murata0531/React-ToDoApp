@@ -1,4 +1,5 @@
 import { useReducer } from 'react';
+import { AppContext } from './AppContext';
 
 import { reducer } from './reducer';
 import { initialState } from './initialState';
@@ -12,14 +13,12 @@ export const App = (): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
-    <div>
-      <Selector dispatch={dispatch} />
-      {state.filter === 'removed' ? (
-        <EmptyButton dispatch={dispatch} />
-      ) : (
-        <Form state={state} dispatch={dispatch} />
-      )}
-      <FilteredTodos state={state} dispatch={dispatch} />
-    </div>
+    <AppContext.Provider value={{ state, dispatch }}>
+      <div>
+        <Selector />
+        {state.filter === 'removed' ? <EmptyButton /> : <Form />}
+        <FilteredTodos />
+      </div>
+    </AppContext.Provider>
   );
 };
