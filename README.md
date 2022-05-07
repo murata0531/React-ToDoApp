@@ -6,7 +6,7 @@ Laravel 8
 
 MySQL 8
 
-React
+React + TypeScript
 
 node 16
 
