@@ -1,13 +1,11 @@
 // 絞り込みコンポーネント
-import { Dispatch, memo } from 'react';
+import { memo, useContext } from 'react';
+import { AppContext } from './AppContext';
 
-type Props = {
-  dispatch: Dispatch<Action>;
-};
-
-export const Selector = memo((props: Props) => {
+export const Selector = memo(() => {
+  const { state, dispatch } = useContext(AppContext);
   const handleOnFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    props.dispatch({ type: 'filter', filter: e.target.value as Filter });
+    dispatch({ type: 'filter', filter: e.target.value as Filter });
   };
 
   return (
