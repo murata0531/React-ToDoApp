@@ -8,6 +8,7 @@ import { Form } from './Form';
 import { Selector } from './Selector';
 import { EmptyButton } from './EmptyButton';
 import { FilteredTodos } from './FilteredTodos';
+import './App.scss';
 
 export const App = (): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, initialState);
