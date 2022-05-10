@@ -16,6 +16,8 @@ nginx 1.20
 
 Vite
 
+node-sass
+
 コンテナ作成
 
 ```
