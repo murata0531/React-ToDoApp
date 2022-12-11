@@ -27,15 +27,20 @@ services:
       - laravel_app
 
   db:
-    build: ./docker/mysql
-    volumes:
-      - db-store:/var/lib/mysql
+    build: ./docker/db
     environment:
-      - MYSQL_DATABASE=${DB_NAME:-test}
-      - MYSQL_USER=${DB_USER:-test}
-      - MYSQL_PASSWORD=${DB_PASS:-test}
-      - MYSQL_ROOT_PASSWORD=${DB_PASS:-test}
-      - TZ=Asia/Tokyo
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - db-store:/var/lib/mysql
+    ports:
+      - 3306:3306
+    tty: true
 
 volumes:
   db-store:
