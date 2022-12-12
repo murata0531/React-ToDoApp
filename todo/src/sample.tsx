@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "./libs/axios";
 import { useEffect, useState } from "react";
 
 type Sample = {
@@ -10,7 +10,7 @@ export default function Sample() {
     const [samples, setSamples] = useState<[] | Sample[]>([]);
     useEffect(() => {
       axios
-        .get("http://localhost:8000/api/getSample")
+        .get("/api/getSample")
         .then((response) => setSamples(response.data))
         .catch((error) => console.log(error));
     }, []);
