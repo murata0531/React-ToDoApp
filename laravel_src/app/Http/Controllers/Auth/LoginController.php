@@ -49,7 +49,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
-        return response()->json(Auth::user());
+        return response()->json(Auth::user()->id);
     }
         return response()->json([], 401);
     }
