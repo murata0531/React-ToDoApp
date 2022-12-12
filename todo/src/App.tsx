@@ -1,9 +1,7 @@
 import { useReducer } from 'react';
 import { AppContext } from './AppContext';
-
 import { reducer } from './reducer';
 import { initialState } from './initialState';
-
 import { Form } from './Form';
 import { Selector } from './Selector';
 import { EmptyButton } from './EmptyButton';
